@@ -1,0 +1,42 @@
+me: Chester Holtz
+Email: choltz2@u.rochester.edu
+Course: CSC576
+Homework: Implement a matrix completion solution to the Netflix Recommendation Problem (Colalborative Filtering)
+
+************ Files *****************
+README.txt        this file
+writeup.pdf       writeup file
+factor.py         apply ALS with weighted-lambda regularization to solve complete the user-movie matrix
+hw2-training.txt  netflix movie training data column1: user id column2: movie id column3:rating column4: date (unused)
+hw2-testing.txt   netflix testing data (format same as above)
+output.txt        output from factor.py. Approximated ratings for users/movies from hw2-testing.txt (format as above without date column, values unrounded)
+
+************ Instructions **********
+python factor.py
+
+************ Algorithm, Results, & Interpretation *************
+-- Algorithm --
+The algorithm implemented for this assignment was \textbf{Alternating Least Squares} with weighted-$\lambda$-regularization described in section \textbf{3.1} of the paper \textbf{Large-scale Parallel Collaborative Filtering for the Netflix Prize} by Zhou et al. The parallel approaches they applied in sections \textbf{3.2} were not implemented. 
+
+Zhou et al. formulate the matrix completion problem as a matrix-completion-by-factorization problem. They minimize the empirical, total loss which is simply the average of the square loss function defined as the squared error: $l^2(r,\mathbf{u},\mathbf{m}) = (r-<\mathbf{u},\mathbf{m}>)^2$. 
+
+They regularize the empirical loss with a regularization term similar to Tikhonov regularization. The function is: 
+$$f(U,M) = \sum_{(i,j)\in I} (r_{ij} - \mathbf{u}_i^T\mathbf{m}_j)^2 + \lambda(\sum_i n_{u_i}||\mathbf{u_i}||^2 + \sum_j n_{m_j}||\mathbf{m_j}||^2)$$
+They then derive $\mathbf{u_i} = A_i^{-1}V_i$ and $\mathbf{m_j} = A_j^{-1}V_j$ where $A_i = M_{I_i}M_{I_i}^T + \lambda n_{u_i}E, V_j = M_{I_i}R^T(i,I_i)$ and $A_j = U_{I_j}U_{I_j}^T + \lambda n_{m_j}E, V_j = U_{I_j}R^T(j,I_j)$ where $E$ is the $r\times r$ identity matrix. See the paper for further details.
+
+The pseudocode for the algorithm described in the paper and class notes can be summarized:
+
+- Initialize pattern matrix $M$ by assigning the average rating for movies to the first row of $M$ and small random numbers for the remaining entries. Initialize elements of $U$ to small random numbers
+- Fix $M$, solve $U$ by minimizing the objective function (sum of squared errors).
+- Fix $U$, solve $M$ by minimizing the objective function.
+- Repeat Steps 2 and 3 until the algorithm has converged or a stopping criterion is satisfied.
+
+-- Parameters and Results --
+Model parameters were $\lambda$ and $r$. Zhou et al.'s best reported scores (RMSE = $0.8985$) were achieved with $\lambda = 0.065$ and $r = 1000$ after $50$ iterations. The convergence criterion for this assignment was an iteration threshold $=20$. An appropriate value for $\lambda$ of $0.1$ and $r$ of $20$ was reached by manually tuning on the test set.
+
+I analyzed the results of running my algorithm on the provided data sets with Root Squared Mean Error (RSME) score. The results from this algorithm are inferior to those described in Zhou et al.'s paper with the Train-RMSE score converging to $0.69$ and the Test-RMSE score going to approximately $0.958$ after $20$ iterations. I did not have enough time to rigorously optimize my parameters ($\lambda, r$) with cross-validation or statistical techniques, implement the global bias shift implemented in the original paper, or test the algorithm against a larger dataset - any of these factors may have contributed to the substandard RMSE scores compared to the scores reported by the paper.
+
+************ References ************
+Class Notes
+Large-Scale Parallel Collaborative Filtering for the Netflix Prize, Zhou, Wilkinson, Schreiber, Pain. HP Labs
+Pattern Recognition and Machine Learning, Bishop
