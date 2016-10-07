@@ -78,7 +78,7 @@ while k < K:
         if (nmj == 0): nmj = 1 # remove zeros
 
         # Least squares solution
-        Aj = np.add(np.dot(U, np.dot(np.diag(Ij), U.T)), np.multiply(l, np.multiply(nmj, E))) $ A_j = # A_j = U_{I_j}U_{I_j}^T + ln_{m_j}E
+        Aj = np.add(np.dot(U, np.dot(np.diag(Ij), U.T)), np.multiply(l, np.multiply(nmj, E))) # A_j = U_{I_j}U_{I_j}^T + ln_{m_j}E
         Vj = np.dot(U, np.dot(np.diag(Ij), R[:,j])) # V_j = U_{I_j}R(I_j,j)
         try:
             M[:,j] = np.linalg.solve(Aj,Vj).reshape(r)
