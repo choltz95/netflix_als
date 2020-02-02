@@ -1,5 +1,5 @@
 # netflix_als
-als with weighted-lambda-regularization for collaborative filtering
+Alternating least squares with weighted-lambda-regularization for collaborative filtering
 
 Implemented Alternating Least Squares with weighted-$\lambda$-regularization described in section \textbf{3.1} of the paper \textbf{Large-scale Parallel Collaborative Filtering for the Netflix Prize} by Zhou et al. The parallel approaches they applied in sections \textbf{3.2} were not implemented.
 
